@@ -10,45 +10,62 @@ title: 'Run a Operator(Not released to mainnet yet)'
 
 ➕Linux Environment: Eigenlayer’s CLI only runs in a Linux environment.
 
-➕[Go](https://go.dev/doc/install): Two out of three installation routes require the use of Go. It’s safer to go with Go than go without. 😉
+Run the following commands to clone the Oprator Setup Repo and create a new environment file from the provided template. 
+
+```
+git clone https://github.com/Layr-Labs/chainbase-avs-setup.git
+cd chainbase-avs-setup
+cd holesky && cp .env.example .env
+```
+
+The provided `.env` contains many default configuration settings for the node. All sections marked with TODO must be updated to match your environment. 
+
+**Configure local storage locations**
+
+Check that the `$USER_HOME`, `$EIGENLAYER_HOME`, `$CHAINBASE_AVS_HOME` are properly set within your environment file and that all the folders exist as expected.
+
 
 ## EigenLayer Registration
 
 Before registering as an AVS, ensure that the operator has already registered with EigenLayer. 
 For reference, see [here](https://docs.eigenlayer.xyz/eigenlayer/operator-guides/operator-installation)
 
-## Chainbase AVS Contract Registration
+## Chainbase AVS Registration
 
-1. `git clone https://github.com/chainbase-labs/chainbase-avs-contracts.git`
-
-2. rename `avs.toml.example` to `avs.toml` and replace filed: `operator_config_path`,`keystore_pwd`
-
-```yaml
-operator_config_path = "/path/to/operator.yaml"
-keystore_pwd = "your_keystore_password"
-avs_contract_address="0x5E78eFF26480A75E06cCdABe88Eb522D4D8e1C9d"
-avs_dir_contract_address="0x055733000064333CaDDbC92763c58BF0192fFeBf"
-rpc_url="https://rpc.ankr.com/eth_holesky"
-```
-
-The `operator.yaml` file is created when you register as an operator using the EigenLayer CLI. You should use the same file created during that process and do not need to modify it.
-
-1. download the latest chainbase-avs-cli release from [here](https://github.com/chainbase-labs/chainbase-avs-contracts/releases)
-
-
-2. Run the following command to register as an operator:
-
-```
-chainbase-avs-cli register --config  ~/path/to/avs.toml
-``` 
-
-## Run AVS
-
-2. Edit `operator.yaml`'s `private_key_store_path` point to `/opt/operator.yaml`.
-
+If you have successfully registered as an EigenLayer operator, you can execute the following command from the `chainbase-operator-setup` folder to register AVS:
 
 ```shell
-export OPERATOR_CONFIG_PATH=/path/to/operator.yaml  EIGEN_KEY_PATH=/path/to/ecdsa.key.json
+./chainbase-avs.sh register
+```
 
-docker-compose up --build -d
+
+
+## Run
+
+Execute the following command to start the docker containers:
+
+```shell
+./chainbase-avs.sh run
+```
+
+## View logs
+
+You may view the container logs using and of the following commands
+
+```shell
+ docker-compose logs -f  chainbase-node
+```
+
+Upon successfully starting up, the Chainbase node should produce logs similar to the following:
+
+```shell
+chainbase-node  | time=2024-08-05T09:23:21.650Z level=INFO msg=operator address=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52
+chainbase-node  | time=2024-08-05T09:23:21.651Z level=INFO msg="AVS is registered,continue"
+chainbase-node  | time=2024-08-05T09:23:22.730Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:23:39.008Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:23:54.781Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:24:10.597Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:24:26.396Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:24:42.250Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
+chainbase-node  | time=2024-08-05T09:24:58.009Z level=INFO msg="update host metrics" avsAddr=0x20E67b6FbF0C1eCbCA2f0f6A8ffD0f0DA0031B52 ip=188.253.117.10 job_manager_status=1
 ```
